@@ -2,6 +2,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getUserList } from '../redux/thunks/appThunks';
 
 
 // https://jsonplaceholder.typicode.com/users
@@ -13,25 +14,13 @@ const Main = () => {
     // const loading = useSelector(state => state.loading);
     // const userList = useSelector(state => state.userList);
 
-    const { loading, userList } = useSelector(state => state);
+    // const { loading, userList } = useSelector(state => state);
+
+    const { loading } = useSelector(state => state.app)
+    const { userList } = useSelector(state => state.user)
 
     useEffect(() => {
-        const getUserList = async () => {
-
-            try {
-                dispatch({ type: 'SET_LOADING_TRUE' });
-                const response = await axios.get('https://jsonplaceholder.typicode.com/users');
-                console.log(response)
-                dispatch({ type: 'SET_USER_LIST', payload: response.data })
-            } catch (error) {
-                console.log(error)
-            } finally {
-                dispatch({ type: 'SET_LOADING_FALSE' });
-            }
-
-        }
-
-        getUserList();
+        dispatch(getUserList());
     }, []);
 
 
@@ -47,16 +36,17 @@ const Main = () => {
                 </TableHead>
                 <TableBody>
                     {
-                        userList.map((row) => (
-                            <TableRow
-                                key={row.name}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell>{row.username}</TableCell>
-                                <TableCell>{row.email}</TableCell>
-                            </TableRow>
-                        ))
+                        loading ? 'Loading' :
+                            userList.map((row) => (
+                                <TableRow
+                                    key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell>{row.name}</TableCell>
+                                    <TableCell>{row.username}</TableCell>
+                                    <TableCell>{row.email}</TableCell>
+                                </TableRow>
+                            ))
                     }
                 </TableBody>
             </Table>

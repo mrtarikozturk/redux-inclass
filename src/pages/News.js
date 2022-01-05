@@ -5,13 +5,24 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardMedia } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react';
+import { getNewsThunk } from '../redux/thunks/newsThunks'
 
 const News = () => {
+    const dispatch = useDispatch();
+
+    const { newsList } = useSelector(state => state.news)
+
+
+    useEffect(() => {
+        dispatch(getNewsThunk());
+    }, []);
 
     return (
         <Box xs={{ d: 'flex' }} display='flex' alignItems='center' justifyContent='space-evenly' flexWrap='wrap'>
             {
-                [1, 2, 3, 4].map(item => (
+                newsList.map(item => (
                     <Card sx={{ maxWidth: 345, m: 5 }}>
                         <CardMedia
                             component="img"
