@@ -1,15 +1,40 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const fakeUserList = [
-    { name: 'Ed', username: 'mred', email: 'mred@mail.com' },
-    { name: 'Felix', username: 'mrfelix', email: 'mrfelix@mail.com' },
-    { name: 'John', username: 'mrjohn', email: 'mrjohn@mail.com' },
-    { name: 'Tom', username: 'mrtom', email: 'mrtom@mail.com' },
-    { name: 'Jos', username: 'mrjos', email: 'mrjos@mail.com' },
-]
+
+// https://jsonplaceholder.typicode.com/users
+
+
 
 const Main = () => {
+    const dispatch = useDispatch();
+    // const loading = useSelector(state => state.loading);
+    // const userList = useSelector(state => state.userList);
+
+    const { loading, userList } = useSelector(state => state);
+
+    useEffect(() => {
+        const getUserList = async () => {
+
+            try {
+                dispatch({ type: 'SET_LOADING_TRUE' });
+                const response = await axios.get('https://jsonplaceholder.typicode.com/users');
+                console.log(response)
+                dispatch({ type: 'SET_USER_LIST', payload: response.data })
+            } catch (error) {
+                console.log(error)
+            } finally {
+                dispatch({ type: 'SET_LOADING_FALSE' });
+            }
+
+        }
+
+        getUserList();
+    }, []);
+
+
     return (
         <TableContainer component={Paper} >
             <Table sx={{ minWidth: 650 }}>
@@ -22,7 +47,7 @@ const Main = () => {
                 </TableHead>
                 <TableBody>
                     {
-                        fakeUserList.map((row) => (
+                        userList.map((row) => (
                             <TableRow
                                 key={row.name}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
